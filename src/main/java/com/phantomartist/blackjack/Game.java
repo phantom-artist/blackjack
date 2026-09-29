@@ -1,6 +1,5 @@
 package com.phantomartist.blackjack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,69 +22,59 @@ public class Game {
 		// Burn one
 		final Card burn = cards.removeFirst();
 		Output.print("Burn card was");
-		Output.print(burn);
+		Output.print(burn.toShortString());
+		Output.print("");
 
-		// Deal cards
+		// Deal initial cards
 		final Player player = new Player(cards.removeFirst(), cards.removeFirst());
 		final Player dealer = new Player(cards.removeFirst(), cards.removeFirst());
 
 		// Show cards
 		Output.print("Dealer has");
-		Output.print(dealer.card1());
-
+		Output.print(dealer.cardAt(0).toShortString() + " and ?");
+		Output.print("");
 		Output.print("Player has");
-		Output.print(player.card1());
-		Output.print(player.card2());
+		Output.print(player.cardAt(0).toShortString() + " and " + player.cardAt(1).toShortString() + " total " + player.calculateTotal());
 
 		// Stick or twist?
-		final List<Card> playerCards = new ArrayList<>();
-		playerCards.add(player.card1());
-		playerCards.add(player.card2());
-
 		boolean turnComplete = false;
-		int playerTotal = 0;
 
 		while (!turnComplete) {
 			final String response = Output.ask("Stick or twist?");
 			if ("stick".equalsIgnoreCase(response)) {
 				turnComplete = true;
-			} else {
-				final Card card = cards.removeFirst();
-				playerCards.add(card);
-				playerTotal = GameLogic.calculateTotal(playerCards);
-				Output.print("Drew " + card + " total " + playerTotal);
+			} else if ("twist".equalsIgnoreCase(response)) {
+				player.drawNextCard(cards);
+				int playerTotal = player.calculateTotal();
+				Output.print("Drew " + player.showLastCard().toShortString() + " total " + playerTotal);
 				if (playerTotal > 21) {
 					turnComplete = true;
 				}
+			} else {
+				Output.print("Didn't understand you?");
 			}
 		}
 
 		// Dealer turn
+		Output.print("");
 		Output.print("Dealer has");
-		Output.print(dealer.card1());
-		Output.print(dealer.card2());
-
-		final List<Card> dealerCards = new ArrayList<>();
-		dealerCards.add(dealer.card1());
-		dealerCards.add(dealer.card2());
-		int dealerTotal = GameLogic.calculateTotal(dealerCards);
+		Output.print(dealer.cardAt(0).toShortString() + " and " + dealer.cardAt(1).toShortString() + " total " + dealer.calculateTotal());
 		
 		// Did player bust?
-		if (playerTotal > 21) {
+		if (player.calculateTotal() > 21) {
 
-			GameLogic.determineWinner(playerTotal, dealerTotal);
+			Output.print("Player BUST, winner is DEALER");
 			
 		} else {
 
 			boolean dealerStop = false;
 			while (!dealerStop) {
-				if (dealerTotal >= 16) {
-					GameLogic.determineWinner(playerTotal, dealerTotal);
+				if (dealer.calculateTotal() >= 16) {
 					dealerStop = true;
+					Output.print("Winner is " + GameLogic.determineWinner(player, dealer));
 				} else {
-					final Card nextCard = cards.getFirst();
-					Output.print("Dealer drew " + nextCard);
-					dealerCards.add(nextCard);
+					dealer.drawNextCard(cards);
+					Output.print("Dealer drew " + dealer.showLastCard().toShortString() + " total " + dealer.calculateTotal());
 				}
 			}
 		}
