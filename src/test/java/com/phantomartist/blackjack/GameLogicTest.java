@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 class GameLogicTest {
 
+	private static final Deck TEST_DECK = Deck.newDeck();
+
 	@Test
 	void testPlayerWin() {
 
@@ -32,7 +34,8 @@ class GameLogicTest {
 		
 		final List<Card> nextCards = new ArrayList<>();
 		nextCards.add(new Card(Suit.CLUB, CardType.TEN));
-		player.drawNextCard(nextCards);
+		TEST_DECK.setCards(nextCards);
+		player.drawNextCard(TEST_DECK);
 
 		Player dealer = new Player(
 				new Card(Suit.CLUB, CardType.EIGHT),
@@ -79,9 +82,9 @@ class GameLogicTest {
 		final List<Card> nextCards = new ArrayList<>();
 		nextCards.add(new Card(Suit.CLUB, CardType.TEN));
 		nextCards.add(new Card(Suit.DIAMOND, CardType.NINE));
-
-		player.drawNextCard(nextCards);
-		player.drawNextCard(nextCards);
+		TEST_DECK.setCards(nextCards);
+		player.drawNextCard(TEST_DECK);
+		player.drawNextCard(TEST_DECK);
 
 		Player dealer = new Player(
 				new Card(Suit.CLUB, CardType.QUEEN),

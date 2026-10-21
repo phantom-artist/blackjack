@@ -12,8 +12,16 @@ public class Deck {
 		return new Deck();
 	}
 
+	public void setCards(final List<Card> testCards) {
+		cards = testCards;
+	}
+
 	public List<Card> getCards() {
 		return new ArrayList<Card>(cards);
+	}
+
+	public Card drawNext() {
+		return cards.removeFirst();
 	}
 
 	public void shuffle() {
